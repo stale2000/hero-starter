@@ -81,12 +81,22 @@ var move = function(gameData, helpers) {
   var distanceToHealthWell = healthWellStats.distance;
   var directionToHealthWell = healthWellStats.direction;
 
+  // get stats for nearest ally
+  var allyStats = helpers.findNearestObjectDirectionAndDistance(gameData.board, myHero, function(heroTile) {
+    return heroTile.type === 'Hero' && heroTile.team === hero.team;
+  });
+
+  // If near an ally, heal them
+  if (allyStats.distance === 1 && allyStats.health < 100)
+  {
+    return allyStats.direction;
+  }
 
   if (myHero.health < 100 && distanceToHealthWell === 1) {
     //Heal if you aren't full health and are close to a health well already
      return directionToHealthWell;
   }
-  if (myHero.health < 50) {
+  if (myHero.health < 60) {
     return helpers.findNearestHealthWell(gameData);
   } else {
 	if (helpers.findNearestWeakerEnemy(gameData) != undefined) {

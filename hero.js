@@ -89,7 +89,11 @@ var move = function(gameData, helpers) {
   if (myHero.health < 50) {
     return helpers.findNearestHealthWell(gameData);
   } else {
-    return helpers.findNearestWeakerEnemy(gameData);
+	if (helpers.findNearestWeakerEnemy(gameData) != undefined) {
+      return helpers.findNearestWeakerEnemy(gameData);
+    }else {
+      return helpers.findNearestEnemy(gameData);
+    }
   }
 };
 

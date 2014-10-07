@@ -68,8 +68,11 @@
 //   }
 // };
 
-// The "Careful Assassin"
+// The "stale2000 Assassin"
 // This hero will attempt to kill the closest weaker enemy hero.
+// also it heals nearby allies
+// also it will always kill an enemy if able
+// also it prioritizes not dieing
 var move = function(gameData, helpers) {
   var myHero = gameData.activeHero;
   //Get stats on the nearest health well
@@ -83,8 +86,24 @@ var move = function(gameData, helpers) {
 
   // get stats for nearest ally
   var allyStats = helpers.findNearestObjectDirectionAndDistance(gameData.board, myHero, function(heroTile) {
-    return heroTile.type === 'Hero' && heroTile.team === hero.team;
+    return heroTile.type === 'Hero' && heroTile.team === myHero.team;
   });
+
+  // get stats for nearest enemy
+  var enemyStats = helpers.findNearestObjectDirectionAndDistance(gameData.board, myHero, function(heroTile) {
+    return heroTile.type === 'Hero' && heroTile.team !== myHero.team;
+  });
+
+  if (myHero.health <= 30 && distanceToHealthWell === 1) {
+    //Always heal if you are about to die and can stop it
+     return directionToHealthWell;
+  }
+
+  // If you can kill an enemy then kill it
+  if (enemyStats.distance === 1 && (enemyStats.health <= 30 || enemyStats.health <= myHero.health))
+  {
+    return enemyStats.direction;
+  }
 
   // If near an ally, heal them
   if (allyStats.distance === 1 && allyStats.health < 100)
